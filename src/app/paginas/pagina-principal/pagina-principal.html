@@ -1,0 +1,208 @@
+<section class="mt-5 ms-5 me-5">
+  <div class="d-flex-column">
+    <div class="cabecera d-flex mb-3 justify-content-between align-items-center flex-wrap mb-3">
+      <div class="d-flex flex-row justify-content-start align-items-center gap-2 w-50">
+        <span>Número usuarios por página: </span>
+        <select
+          class="form-select w-25"
+          (change)="cambiarCantidadUsuarios($event)"
+          aria-label="Default select example"
+        >
+          <option selected disabled value="5">Usuarios</option>
+          @for (pagina of numeroUsuarios; track $index; let i = $index) {
+          <option [value]="pagina">{{ pagina }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="d-flex gap-2 justify-content-end">
+        <div class="input-group mb-3 w-50">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Buscar usuario"
+            [(ngModel)]="textoBusqueda"
+            (input)="buscarUsuario()"
+          />
+        </div>
+
+        <div>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="abrirNuevoUsuario()"
+            data-bs-toggle="modal"
+            data-bs-target="#accionModal"
+          >
+            Nuevo Usuario
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-responsive tabla">
+      <table class="table table-bordered">
+        <thead>
+          <tr class="text-center">
+            <th># Fila</th>
+            <th>Nombre</th>
+            <th>Nombre usuario</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Website</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of usuariosPaginados; track $index ;let i = $index) {
+          <tr class="text-start">
+            <td>{{ i + 1 }}</td>
+            <td>{{ usuario.name }}</td>
+            <td>{{ usuario.username }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>
+              {{ usuario.phone }}
+            </td>
+            <td>{{ usuario.website }}</td>
+            <td class="text-center">
+              <div class="d-flex gap-2 align-items-center justify-content-center">
+                <button
+                  class="btn btn-primary"
+                  (click)="abrirEditar(usuario)"
+                  data-bs-toggle="modal"
+                  data-bs-target="#accionModal"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button class="btn btn-danger" (click)="eliminarUsuario(usuario.id!)">
+                  <i class="bi bi-eraser-fill"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          } @empty {
+          <tr>
+            <td colspan="7">No hay usuarios</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="d-flex justify-content-end mt-3">
+      <nav aria-label="Page navigation">
+        <ul class="pagination">
+          <li class="page-item" [class.disabled]="paginaPrincipal === 1">
+            <a
+              class="page-link"
+              href="#"
+              (click)="cambiarPagina(paginaPrincipal - 1); $event.preventDefault()"
+              aria-label="Previous"
+            >
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          @for (pagina of paginas; track pagina) {
+          <li class="page-item" [class.active]="paginaPrincipal === pagina">
+            <a
+              class="page-link"
+              href="#"
+              (click)="cambiarPagina(pagina); $event.preventDefault()"
+              >{{ pagina }}</a
+            >
+          </li>
+          }
+          <li class="page-item" [class.disabled]="paginaPrincipal === totalPaginas">
+            <a
+              class="page-link"
+              href="#"
+              (click)="cambiarPagina(paginaPrincipal + 1); $event.preventDefault()"
+              aria-label="Next"
+            >
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<div
+  class="modal fade"
+  id="accionModal"
+  tabindex="-1"
+  aria-labelledby="accionModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="accionModalLabel">
+          {{ modoEditar ? 'Editar Usuario' : 'Nuevo Usuario' }}
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="name" class="form-label">Nombre</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              [(ngModel)]="usuarioSeleccionado.name"
+              name="name"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="username" class="form-label">Nombre de usuario</label>
+            <input
+              type="text"
+              class="form-control"
+              id="username"
+              [(ngModel)]="usuarioSeleccionado.username"
+              name="username"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              [(ngModel)]="usuarioSeleccionado.email"
+              name="email"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="phone" class="form-label">Teléfono</label>
+            <input
+              type="tel"
+              class="form-control"
+              id="phone"
+              [(ngModel)]="usuarioSeleccionado.phone"
+              name="phone"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="website" class="form-label">Website</label>
+            <input
+              type="url"
+              class="form-control"
+              id="website"
+              [(ngModel)]="usuarioSeleccionado.website"
+              name="website"
+            />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" (click)="guardarUsuario()">
+          {{ modoEditar ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

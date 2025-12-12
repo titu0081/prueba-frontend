@@ -1,0 +1,11 @@
+.tabla {
+  height: 67vh;
+  max-height: 100vh;
+  overflow-y: auto;
+  thead {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 1;
+  }
+}
