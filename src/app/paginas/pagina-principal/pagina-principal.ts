@@ -39,7 +39,6 @@ export class PaginaPrincipal {
   consultaUsuarios() {
     this.apiService.get('users').subscribe({
       next: (response: any) => {
-        // Si la API viene con id, respetarlo, si no crearlos
         this.usuarios = response.map((u: any, i: number) => ({
           id: u.id ?? i + 1,
           name: u.name,
@@ -51,6 +50,7 @@ export class PaginaPrincipal {
 
         this.usuariosFiltrados = [...this.usuarios];
         this.actualizarPaginado();
+        //Sirve para actualizar la vista después de la llamada
         this.cd.detectChanges();
       },
       error: (err) => console.error('Error:', err),
